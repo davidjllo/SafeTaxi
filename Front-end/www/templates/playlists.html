@@ -1,0 +1,36 @@
+<ion-view view-title="SafeTaxi" >
+<ion-content>
+<style type="text/css">
+.placa{
+	background-image:url('placa.png');
+	background-repeat:no-repeat;	
+}
+</style>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<center>
+	<label class="placa item item-input widget uib_w_8 d-margins" height="auto" data-uib="ionic/input" data-ver="0">
+		<i class="icon ion-search placeholder-icon"></i>
+		<input type="text" ng-model="placa" style="text-align:center"placeholder='Ingrese placa'>
+	</label>
+
+	<br>
+	<div style="background-color:{{myColor}}" ng-model="luz">
+		<br>
+		<br>
+		<center>
+		<h2>{{estado}}</h2>
+		</center>
+		<br>
+		<br>
+	</div>
+	<br>
+	<button class="button button-block button-positive" ng-click="getLicense(placa)"> Buscar</button>
+</center>
+
+</ion-content>
+</ion-view>
