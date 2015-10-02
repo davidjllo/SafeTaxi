@@ -3,7 +3,23 @@
 <style type="text/css">
 .placa{
 	background-image:url('placa.png');
-	background-repeat:no-repeat;	
+	background-repeat:no-repeat;
+	 background-position: center;
+	 height:160px;	
+}
+.input{
+  position: relative;
+  top: 50% ;
+  transform: translateY(-50%);
+  text-align:center;
+  height:80px;
+}
+input[type="text"]
+{
+    background: transparent;
+    border: none;
+	font-size:90px;
+	height:auto;
 }
 </style>
 <br>
@@ -13,9 +29,9 @@
 <br>
 <br>
 <center>
-	<label class="placa item item-input widget uib_w_8 d-margins" height="auto" data-uib="ionic/input" data-ver="0">
-		<i class="icon ion-search placeholder-icon"></i>
-		<input type="text" ng-model="placa" style="text-align:center"placeholder='Ingrese placa'>
+	<label class="placa item widget uib_w_8 d-margins"  data-uib="ionic/input" data-ver="0">
+		<!-- <i class="icon ion-search placeholder-icon"></i> -->
+		<input type="text" ng-model="placa" class="input">
 	</label>
 
 	<br>
