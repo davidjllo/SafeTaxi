@@ -18,9 +18,14 @@
 </ion-header-bar>
 <ion-content>
 <ion-list>
-<ion-item menu-close ng-click="login()">
+<ion-item menu-close ng-click="login()" ng-hide="loginButton"ng-attr-id="$scope.login">
 Login
 </ion-item>
+<div class="ng-hide" ng-attr-id="$scope.logout" ng-show="logoutButton">
+<ion-item menu-close ng-click="fbLogout()" >
+Logout
+</ion-item>
+</div>
 </ion-list>
 </ion-content>
 </ion-side-menu>
