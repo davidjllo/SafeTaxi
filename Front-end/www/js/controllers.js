@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['ngOpenFB'])
+angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, ngFB) {
 
@@ -63,7 +63,7 @@ angular.module('starter.controllers', ['ngOpenFB'])
     $scope.logoutButton= !($scope.logoutButton);
   };
 })
-.controller('PlaylistsCtrl', function($scope, $http) {
+.controller('PlaylistsCtrl', function($scope, $http, TaxiService) {
   licenseToCode = function(license){
     var code="";
     for(var i = 0;i < 3;i++){
@@ -85,9 +85,10 @@ angular.module('starter.controllers', ['ngOpenFB'])
     console.log(license);
     $scope.myColor = "white";
     $scope.estado = "";
-    $http.get('http://localhost:8080/safeTaxi/webapi/taxis/placas/'+license).then(function(resp) {
-      $scope.placas = resp.data;
-      $scope.estado = "Puntaje: " + $scope.placas;
+
+    TaxiService.getRating(license).then(function(response){
+        $scope.placas = response.data;
+        $scope.estado = "Puntaje: " + $scope.placas;
 
       if($scope.placas >= 3){
         $scope.myColor = "green";   
@@ -99,12 +100,12 @@ angular.module('starter.controllers', ['ngOpenFB'])
       if($scope.placas == 0){
         $scope.estado="No ha sido calificado, calificalo y gana 20 puntos!";
         $scope.myColor="white";
-      } 
-      console.log($scope.placas);
-    }, function(err) {
+      }
+    },function(err) {
       console.error('ERR', err);
     // err.status will contain the status code
   })
+
     return $scope.estado;
   }
 
