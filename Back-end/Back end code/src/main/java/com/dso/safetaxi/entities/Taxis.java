@@ -6,18 +6,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Taxis {
 
 	
-	private int taxiId;
 	private int placaId;
-	private String modelo;
+	private int modelo;
 	private String marca;
 	private float ratingAvg;
-	
-	public int getTaxiId() {
-		return taxiId;
+	private int rateCount;
+
+	public int getRateCount() {
+		return rateCount;
 	}
 
-	public void setTaxiId(int taxiId) {
-		this.taxiId = taxiId;
+	public void setRateCount(int rateCount) {
+		this.rateCount = rateCount;
 	}
 
 	public int getPlacaId() {
@@ -28,11 +28,11 @@ public class Taxis {
 		this.placaId = placaId;
 	}
 
-	public String getModelo() {
+	public int getModelo() {
 		return modelo;
 	}
 
-	public void setModelo(String modelo) {
+	public void setModelo(int modelo) {
 		this.modelo = modelo;
 	}
 
@@ -56,14 +56,14 @@ public class Taxis {
 		
 	}
 	
-	public Taxis(int taxiId, int placaId, String modelo, String marca,
-			float ratingAvg) {
+	public Taxis(int placaId, int modelo, String marca,
+				float ratingAvg, int rateCount) {
 		super();
-		this.taxiId = taxiId;
 		this.placaId = placaId;
 		this.modelo = modelo;
 		this.marca = marca;
 		this.ratingAvg = ratingAvg;
+		this.rateCount = rateCount;
 	}
 	
 }

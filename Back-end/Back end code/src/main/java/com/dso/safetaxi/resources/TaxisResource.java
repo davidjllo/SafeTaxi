@@ -10,6 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.dso.safetaxi.entities.Comments;
 import com.dso.safetaxi.entities.Taxis;
 import com.dso.safetaxi.services.TaxisService;
 
@@ -22,9 +23,35 @@ public class TaxisResource {
 	
 	@GET
 	@Path("/placas/{hash}")
+	//Function in charged of returning the current rating of a vehicle given a licenseId
 	public String getRating (@PathParam("hash") String hash) {
 		return taxisService.getRating(hash);
 	}
+	
+	@POST
+	@Path("/rate/{taxid}/{rating}/{comment}")
+	/*Function in charged of adding the current report to a historical of the taxi
+	  and updating the taxi table with the new average calculated */ 
+	public String rateTaxi (@PathParam("taxid") String taxid,
+							@PathParam("rating") float rating,
+							@PathParam("comment") String comment) {
+		String message = "fail";
+		Comments oldRate = taxisService.getOldRating(taxid);
+		if(taxisService.rateService(taxid, rating, comment) != -1){
+			if(taxisService.updateAvg(taxid, rating, oldRate) != -1){
+				message = "succes updating avg";
+			}
+		}
+		return message;	
+	}
+	
+	@GET
+	@Path("/{hash}")
+	//Function in charged of returning all data relevant to a given licenseId
+	public Taxis getTaxi (@PathParam("hash") String hash) {
+		return taxisService.getTaxi(hash);
+	}
+	
 	
 	
 }
