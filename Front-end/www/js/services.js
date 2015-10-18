@@ -10,7 +10,6 @@ angular.module('starter.services',['ngResource'])
 				console.error('ERR', err);
 
 			});
-
 		}
 	}
 })

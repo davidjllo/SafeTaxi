@@ -18,12 +18,20 @@
 </ion-header-bar>
 <ion-content>
 <ion-list>
+<ion-item menu-close href="#/app/playlists">
+Consulta
+</ion-item>
 <ion-item menu-close ng-click="login()" ng-hide="loginButton"ng-attr-id="$scope.login">
-Login
+Iniciar sesión
 </ion-item>
 <div class="ng-hide" ng-attr-id="$scope.logout" ng-show="logoutButton">
 <ion-item menu-close ng-click="fbLogout()" >
-Logout
+Cerrar sesión
+</ion-item>
+</div>
+<div class="ng-hide" ng-attr-id="$scope.profile" ng-show="profile">
+<ion-item menu-close href="#/app/profile">
+Perfil
 </ion-item>
 </div>
 </ion-list>

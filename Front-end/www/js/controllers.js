@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, ngFB) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, ngFB, ManageUser) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -51,19 +51,37 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
           alert('Facebook login failed');
         }
       });
+    
   };
- 
+
   $scope.fbLogout = function(){
-    ngFB.logout();
-    console.log("logged out");
+     ngFB.logout().then(
+                    function() {
+                        alert('Logout successful');
+                    },
+                    alert('Logout unsuccessful'));
+
     $scope.toggleLoginButtons();
   };
   $scope.toggleLoginButtons = function(){
     $scope.loginButton= !($scope.loginButton);
     $scope.logoutButton= !($scope.logoutButton);
+    $scope.profile = !($scope.profile);
   };
 })
-.controller('PlaylistsCtrl', function($scope, $http, TaxiService) {
+.controller('ProfileCtrl', function ($scope, ngFB) {
+    ngFB.api({
+        path: '/me',
+        params: {fields: 'id,name'}
+    }).then(
+        function (user) {
+            $scope.user = user;
+        },
+        function (error) {
+            alert('Facebook error: ' + error.error_description);
+        });
+})
+.controller('PlaylistsCtrl', function($scope, $http, TaxiService, ManageUser, ngFB) {
   licenseToCode = function(license){
     var code="";
     for(var i = 0;i < 3;i++){
@@ -87,8 +105,8 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
     $scope.estado = "";
 
     TaxiService.getRating(license).then(function(response){
-        $scope.placas = response.data;
-        $scope.estado = "Puntaje: " + $scope.placas;
+      $scope.placas = response.data;
+      $scope.estado = "Puntaje: " + $scope.placas;
 
       if($scope.placas >= 3){
         $scope.myColor = "green";   
@@ -110,6 +128,17 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
   }
 
 })
-
+.service('ManageUser', function(){
+  var user;
+  return{
+      getUser: function(){
+        return user;
+      },
+      setUser: function(myUser){
+        console.log("changing user");
+        user = myUser;
+      }
+  };
+})
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 });
