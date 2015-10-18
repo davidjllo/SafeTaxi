@@ -47,13 +47,26 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
           //$localStorage.accessToken = response.access_token;
           $scope.closeLogin();
           $scope.toggleLoginButtons();
+          $scope.getUser();
         } else {
           alert('Facebook login failed');
         }
       });
     
   };
-
+  $scope.getUser = function(){
+    ngFB.api({
+        path: '/me',
+        params: {fields: 'id,name'}
+    }).then(
+        function (user) {
+            $scope.user = user;
+            ManageUser.setUser(user);
+        },
+        function (error) {
+            alert('Facebook error: ' + error.error_description);
+        });
+  }
   $scope.fbLogout = function(){
      ngFB.logout().then(
                     function() {
