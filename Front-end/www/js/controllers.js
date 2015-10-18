@@ -69,19 +69,27 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
     $scope.profile = !($scope.profile);
   };
 })
-.controller('ProfileCtrl', function ($scope, ngFB) {
+.controller('ProfileCtrl', function ($scope, ngFB, ManageUser) {
     ngFB.api({
         path: '/me',
         params: {fields: 'id,name'}
     }).then(
         function (user) {
             $scope.user = user;
+            ManageUser.setUser(user);
         },
         function (error) {
             alert('Facebook error: ' + error.error_description);
         });
 })
 .controller('PlaylistsCtrl', function($scope, $http, TaxiService, ManageUser, ngFB) {
+  $scope.user = ManageUser.getUser();
+  $scope.$watch(function () { return ManageUser.getUser(); }, function (newValue, oldValue) {
+        if (newValue != null) {
+            //update Controller2's xxx value
+            $scope.user= newValue;
+        }
+    }, true);
   licenseToCode = function(license){
     var code="";
     for(var i = 0;i < 3;i++){
