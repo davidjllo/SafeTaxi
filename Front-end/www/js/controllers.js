@@ -98,11 +98,12 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
         });
 })
 
-.controller('CalificarCrl', function($scope, $http, TaxiService2, ManageUser, ngFB) {
-    
+.controller('CalificarCtrl', function($scope, $http, TaxiService2, myService, ManageUser, ngFB) {
+    $scope.desiredLocation = myService.get();
+    console.log($scope.desiredLocation, "Esto es lo que debería imprimir")
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, TaxiService, TaxiService2, ManageUser, ngFB) {
+.controller('PlaylistsCtrl', function($scope, $http, TaxiService, TaxiService2, myService, ManageUser, ngFB) {
   $scope.user = ManageUser.getUser();
   $scope.$watch(function () { return ManageUser.getUser(); }, function (newValue, oldValue) {
         if (newValue != null) {
@@ -156,22 +157,22 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
   }
 
   $scope.getTaxiRating = function(license){
-    $scope.taxiRating = "";
-    console.log(license);
-    license = licenseToCode(license);
-    console.log(license);
+      $scope.taxiRating = "";
+      console.log(license);
+      license = licenseToCode(license);
+      console.log(license);
 
       TaxiService2.getTaxi(license).then(function(response){
-      console.log(response, "Este es el response del json")
-      $scope.taxiRating = response.data.ratingAvg;
-      console.log($scope.taxiRating, "datos del taxi");
-    },function(err) {
+        console.log(response, "Este es el response del json")
+        $scope.taxiRating = response.data.ratingAvg;
+        console.log($scope.taxiRating, "datos del taxi");
+        myService.set($scope.taxiRating);
+      },function(err) {
       console.error('ERR', err);
     // err.status will contain the status code
   }) 
     return $scope.taxiRating;
   }
-
 
 })
 .service('ManageUser', function(){

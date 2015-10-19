@@ -49,8 +49,8 @@ var nameApp = angular.module('starter', ['ionic', 'starter.controllers', 'starte
         'menuContent': {
         parent : 'playlists',
         templateUrl: 'templates/calificar.html',
-        controller: 'PlaylistsCtrl'
-      }
+        controller: 'CalificarCtrl'
+      } 
     }
   })
 
