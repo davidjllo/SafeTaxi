@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','ngOpenFB'])
+var nameApp = angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','ngOpenFB'])
 
 .run(function($ionicPlatform, ngFB) {
   ngFB.init({appId: '1697360640500768'});
@@ -32,6 +32,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
     templateUrl: 'templates/menu.html',
     controller: 'AppCtrl'
   })
+
   .state('app.playlists', {
     url: '/playlists',
     views: {
@@ -41,6 +42,19 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
       }
     }
   })
+
+.state('app.calificar', {
+    url: "/calificar",
+    views: {
+        'menuContent': {
+            templateUrl: "templates/calificar.html",
+            controller: "CalificarCrl"
+        }
+    }
+})
+
+ 
+
 .state('app.profile', {
     url: "/profile",
     views: {
@@ -59,6 +73,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services','n
       }
     }
   });
+
+ 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/playlists');
 });
