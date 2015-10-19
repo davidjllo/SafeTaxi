@@ -43,25 +43,23 @@ var nameApp = angular.module('starter', ['ionic', 'starter.controllers', 'starte
     }
   })
 
-.state('app.calificar', {
-    url: "/calificar",
-    views: {
+  .state('app.calificar', {
+    url: '/calificar',
+      views: {
         'menuContent': {
-            templateUrl: "templates/calificar.html",
-            controller: "CalificarCrl"
-        }
+        parent : 'playlists',
+        templateUrl: 'templates/calificar.html',
+        controller: 'PlaylistsCtrl'
+      }
     }
-})
-
- 
+  })
 
 .state('app.profile', {
     url: "/profile",
     views: {
-        'menuContent': {
             templateUrl: "templates/profile.html",
             controller: "ProfileCtrl"
-        }
+        
     }
 })
   .state('app.single', {

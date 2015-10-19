@@ -99,55 +99,10 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
 })
 
 .controller('CalificarCrl', function($scope, $http, TaxiService2, ManageUser, ngFB) {
-    icenseToCode = function(license){
-    var code="";
-    for(var i = 0;i < 3;i++){
-      code = code.concat(charToNum(license.substr(i,i+2)));
-    }
-    code = code.concat(license.substr(license.length-3));
-    return code;
-    }
-    charToNum = function(letter){
-    letter = letter.toUpperCase();
-    var code = '0';
-    code = code.concat(letter.charCodeAt(0)-64);
-    code = code.substr(code.length-2);
-    return code;
-    }
-    $scope.getTaxi = function(license){
-    console.log(license);
-    license = licenseToCode(license);
-    console.log(license);
-    $scope.taxiModel = "Toda la cosa";
-
-    TaxiService2.getTaxi(license).then(function(response){
-      $scope.model = response.data.modelo;
-      $scope.taxiModel = "Modelo: " ;//+ $scope.model;
-    },function(err) {
-      console.error('ERR', err);
-    // err.status will contain the status code
-  })  
-    return $scope.taxiModel;
-  }
-
-  $scope.getTaxiRating = function(license){
-    console.log(license);
-    license = licenseToCode(license);
-    console.log(license);
-    $scope.taxiRating = "Toda la cosa";
-
-      TaxiService2.getTaxi(license).then(function(response){
-      $scope.rating = response.data.ratingAvg;
-      $scope.taxiRating = "Calificación promedio: "; //+ $scope.rating;
-    },function(err) {
-      console.error('ERR', err);
-    // err.status will contain the status code
-  }) 
-    return $scope.taxiRating;
-  }
+    
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, TaxiService, ManageUser, ngFB) {
+.controller('PlaylistsCtrl', function($scope, $http, TaxiService, TaxiService2, ManageUser, ngFB) {
   $scope.user = ManageUser.getUser();
   $scope.$watch(function () { return ManageUser.getUser(); }, function (newValue, oldValue) {
         if (newValue != null) {
@@ -200,6 +155,22 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
     return $scope.estado;
   }
 
+  $scope.getTaxiRating = function(license){
+    $scope.taxiRating = "";
+    console.log(license);
+    license = licenseToCode(license);
+    console.log(license);
+
+      TaxiService2.getTaxi(license).then(function(response){
+      console.log(response, "Este es el response del json")
+      $scope.taxiRating = response.data.ratingAvg;
+      console.log($scope.taxiRating, "datos del taxi");
+    },function(err) {
+      console.error('ERR', err);
+    // err.status will contain the status code
+  }) 
+    return $scope.taxiRating;
+  }
 
 
 })
