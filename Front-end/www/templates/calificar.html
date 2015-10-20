@@ -1,6 +1,6 @@
 <ion-view view-title="<img class='title-image' src='img/safetaxilogo.png'>">    
 
-<ion-content>
+<ion-content onload="getRating()">
 <style type="text/css">
 
 
@@ -9,20 +9,32 @@
 
 <br>
 <br>
-    <center>
-        <h2>El modelo es: {{desiredLocation}}</h2>
-    </center>
+<center>
+    <h2>El modelo es: {{taxi.modelo}}</h2>
+</center>
 <br>
-    <center>
-        <h2>La calificación promedio es: {{desiredLocation}}</h2>
-    </center>
+<center>
+    <h2>La calificación promedio es: {{taxi.ratingAvg}}</h2>
+</center>
 <br>
 <br>
 <br>
 <br>
 
+
 <center>
-        <h2>Ingrese la calificación <input type="text" ng-model="string"> </h2>
+    <h2>Ingrese la calificación </h2>
+    <label class="item item-input">
+        <input type="number" placeholder="Ingrese su calificación" ng-model="rating" required>
+    </label>
+    <br>
+    <label class="item item-input">
+        <textarea placeholder="Ingrese sus comentarios" text-align="center" ng-model="comment" required></textarea>
+    </label>
+    <br>
+    <a href="#/app/playlists">
+        <button class="button button-block button-positive" ng-click="sendRating(rating, comment)" > Enviar calificación</button>
+    </a>
 </center>
 
 </ion-content>

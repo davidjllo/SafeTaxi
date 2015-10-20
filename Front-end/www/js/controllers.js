@@ -98,12 +98,10 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
         });
 })
 
-.controller('CalificarCtrl', function($scope, $http, TaxiService2, myService, ManageUser, ngFB) {
-    $scope.desiredLocation = myService.get();
-    console.log($scope.desiredLocation, "Esto es lo que debería imprimir")
-})
-
-.controller('PlaylistsCtrl', function($scope, $http, TaxiService, TaxiService2, myService, ManageUser, ngFB) {
+.controller('PlaylistsCtrl', function($scope, $http, TaxiService, TaxiService2, TransferData, ManageUser, ngFB) {
+  $scope.estado = "";
+  $scope.myColor = "white";
+  console.log("BACKHERE");
   $scope.user = ManageUser.getUser();
   $scope.$watch(function () { return ManageUser.getUser(); }, function (newValue, oldValue) {
         if (newValue != null) {
@@ -126,6 +124,11 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
     code = code.substr(code.length-2);
     return code;
   }
+
+  $scope.clearAll = function(){
+    location.reload();
+  }
+
   $scope.getLicense = function(license){
     console.log(license);
     license = licenseToCode(license);
@@ -156,25 +159,48 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
     return $scope.estado;
   }
 
-  $scope.getTaxiRating = function(license){
+  $scope.sendDataCalificar = function(license){
       $scope.taxiRating = "";
       console.log(license);
       license = licenseToCode(license);
       console.log(license);
-
-      TaxiService2.getTaxi(license).then(function(response){
-        console.log(response, "Este es el response del json")
-        $scope.taxiRating = response.data.ratingAvg;
-        console.log($scope.taxiRating, "datos del taxi");
-        myService.set($scope.taxiRating);
-      },function(err) {
-      console.error('ERR', err);
-    // err.status will contain the status code
-  }) 
-    return $scope.taxiRating;
+      TransferData.setTaxi(license);
+      
+      return $scope.taxiRating;
   }
 
 })
+
+.controller('CalificarCtrl', function($scope, $http, TaxiService2, TransferData, TaxiService3, ManageUser, ngFB) {
+    $scope.placaTaxi = TransferData.getTaxi();
+    getRating();
+    function getRating (){
+      console.log($scope.placaTaxi, "El onload está funcionando");
+      TaxiService2.getTaxi($scope.placaTaxi).then(function(response){
+        console.log(response, "Este es el response del json")
+        $scope.taxi = response.data;
+      },function(err) {
+      console.error('ERR', err);
+      // err.status will contain the status code
+      }) 
+    }
+    $scope.clearAll = function(){
+    location.reload();
+  }
+
+    $scope.sendRating = function(rating, comment){
+      TaxiService3.sendRating($scope.placaTaxi, rating, comment).then(function(response){
+        console.log(response, "this is my response");
+      },function(err) {
+      console.error('ERR', err);
+      // err.status will contain the status code
+      }) 
+      console.log("Rating has been sent, yaay!");
+      $scope.clearAll();
+  }
+})
+
+
 .service('ManageUser', function(){
   var user;
   return{
@@ -187,5 +213,20 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
       }
   };
 })
+
+.service('TransferData', function(){
+  var taxiRating;
+  return{
+      getTaxi: function(){
+        console.log("Aquí está haciendo el get");
+        return taxiRating;
+      },
+      setTaxi: function(myTaxiRating){
+        console.log("Aquí está haciendo el set");
+        taxiRating = myTaxiRating;
+      }
+  };
+})
+
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 });

@@ -30,16 +30,18 @@ public class TaxisResource {
 	
 	@POST
 	@Path("/rate/{taxid}/{rating}/{comment}")
+	@Produces("text/plain")
 	/*Function in charged of adding the current report to a historical of the taxi
 	  and updating the taxi table with the new average calculated */ 
 	public String rateTaxi (@PathParam("taxid") String taxid,
 							@PathParam("rating") float rating,
 							@PathParam("comment") String comment) {
-		String message = "fail";
+		String message = "N";
 		Comments oldRate = taxisService.getOldRating(taxid);
 		if(taxisService.rateService(taxid, rating, comment) != -1){
 			if(taxisService.updateAvg(taxid, rating, oldRate) != -1){
-				message = "succes updating avg";
+				//message = "succes updating avg";
+				message = "S";
 			}
 		}
 		return message;	

@@ -15,7 +15,6 @@ angular.module('starter.services',['ngResource'])
 	}
 })
 
-
 .factory('TaxiService2', function ($http){
 	return {
 		getTaxi: function(license){
@@ -30,19 +29,19 @@ angular.module('starter.services',['ngResource'])
 	}
 })
 
+.factory('TaxiService3', function ($http){
+	return {
+		sendRating: function(license, rating, comment){
+			return $http.post('http://localhost:8080/safetaxi/webapi/taxis/rate/'+license+"/"+rating+"/"+comment).then(function(resp) {
+				user = resp;
+				return user;
+			}, function(err) {
+				console.error('ERR', err);
 
-.factory('myService', function() {
- var savedData = "";
- function set(data) {
-   savedData = data;
- }
- function get() {
-  return savedData;
- }
+			});
+		}
+	}
+})
 
- return {
-  set: set,
-  get: get
- }
 
-});
+

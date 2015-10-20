@@ -2241,6 +2241,14 @@
 .ion-xbox:before {
   content: "\f30c"; }
 
+.starRating:not(old){
+  display        : inline-block;
+  width          : 7.5em;
+  height         : 1.5em;
+  overflow       : hidden;
+  vertical-align : bottom;
+}
+
 /**
  * Resets
  * --------------------------------------------------
