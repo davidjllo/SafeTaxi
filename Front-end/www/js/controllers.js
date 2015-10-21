@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
+angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ratings'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, ngFB, ManageUser) {
 
@@ -98,7 +98,7 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
         });
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, TaxiService, TaxiService2, TransferData, ManageUser, ngFB) {
+.controller('PlaylistsCtrl', function($scope, $http, TaxiService, TransferData, ManageUser, ngFB) {
   $scope.estado = "";
   $scope.myColor = "white";
   console.log("BACKHERE");
@@ -171,12 +171,12 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
 
 })
 
-.controller('CalificarCtrl', function($scope, $http, TaxiService2, TransferData, TaxiService3, ManageUser, ngFB) {
+.controller('CalificarCtrl', function($scope, $http, TaxiService, TransferData, ManageUser, ngFB) {
     $scope.placaTaxi = TransferData.getTaxi();
     getRating();
     function getRating (){
       console.log($scope.placaTaxi, "El onload está funcionando");
-      TaxiService2.getTaxi($scope.placaTaxi).then(function(response){
+      TaxiService.getTaxi($scope.placaTaxi).then(function(response){
         console.log(response, "Este es el response del json")
         $scope.taxi = response.data;
       },function(err) {
@@ -188,8 +188,8 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
     location.reload();
   }
 
-    $scope.sendRating = function(rating, comment){
-      TaxiService3.sendRating($scope.placaTaxi, rating, comment).then(function(response){
+    $scope.sendRating = function(comment){
+      TaxiService.sendRating($scope.placaTaxi, $scope.ratingsObject.rating, comment).then(function(response){
         console.log(response, "this is my response");
       },function(err) {
       console.error('ERR', err);
@@ -198,6 +198,24 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services'])
       console.log("Rating has been sent, yaay!");
       $scope.clearAll();
   }
+
+
+      $scope.ratingsObject = {
+        iconOn : 'ion-ios-star',
+        iconOff : 'ion-ios-star-outline',
+        iconOnColor: 'rgb(255, 201, 0)',
+        iconOffColor:  'rgb(138, 138, 138)',
+        rating:  2,
+        minRating:1,
+        callback: function(rating) {
+          $scope.ratingsCallback(rating);
+        }
+      };
+
+      $scope.ratingsCallback = function(rating) {
+        console.log('Selected rating is : ', rating);
+      };
+
 })
 
 

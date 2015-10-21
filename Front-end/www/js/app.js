@@ -57,9 +57,10 @@ var nameApp = angular.module('starter', ['ionic', 'starter.controllers', 'starte
 .state('app.profile', {
     url: "/profile",
     views: {
-            templateUrl: "templates/profile.html",
-            controller: "ProfileCtrl"
-        
+            'menuContent': {
+                templateUrl: "templates/profile.html",
+                controller: "ProfileCtrl"
+            }
     }
 })
   .state('app.single', {

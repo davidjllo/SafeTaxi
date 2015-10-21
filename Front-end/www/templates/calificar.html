@@ -24,16 +24,15 @@
 
 <center>
     <h2>Ingrese la calificación </h2>
-    <label class="item item-input">
-        <input type="number" placeholder="Ingrese su calificación" ng-model="rating" required>
-    </label>
+        <ionic-ratings ratingsobj='ratingsObject' style="font-size: 50px" ></ionic-ratings>
+    
     <br>
     <label class="item item-input">
         <textarea placeholder="Ingrese sus comentarios" text-align="center" ng-model="comment" required></textarea>
     </label>
     <br>
     <a href="#/app/playlists">
-        <button class="button button-block button-positive" ng-click="sendRating(rating, comment)" > Enviar calificación</button>
+        <button class="button button-block button-positive" ng-click="sendRating(comment)" > Enviar calificación</button>
     </a>
 </center>
 

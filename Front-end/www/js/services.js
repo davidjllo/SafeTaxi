@@ -10,13 +10,7 @@ angular.module('starter.services',['ngResource'])
 				console.error('ERR', err);
 
 			});
-		}
-
-	}
-})
-
-.factory('TaxiService2', function ($http){
-	return {
+		},
 		getTaxi: function(license){
 			return $http.get('http://localhost:8080/safetaxi/webapi/taxis/'+license).then(function(resp) {
 				user = resp;
@@ -25,13 +19,9 @@ angular.module('starter.services',['ngResource'])
 				console.error('ERR', err);
 
 			});
-		}
-	}
-})
-
-.factory('TaxiService3', function ($http){
-	return {
+		},
 		sendRating: function(license, rating, comment){
+			console.log("Entró al tercer servicio con factory");
 			return $http.post('http://localhost:8080/safetaxi/webapi/taxis/rate/'+license+"/"+rating+"/"+comment).then(function(resp) {
 				user = resp;
 				return user;
@@ -40,8 +30,10 @@ angular.module('starter.services',['ngResource'])
 
 			});
 		}
+
 	}
 })
+
 
 
 
