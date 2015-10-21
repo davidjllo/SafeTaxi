@@ -138,7 +138,7 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
 
     TaxiService.getRating(license).then(function(response){
       $scope.placas = response.data;
-      $scope.estado = "Puntaje: " + $scope.placas;
+      $scope.estado = "Puntaje: " + $scope.placas.toFixed(1);
 
       if($scope.placas >= 3){
         $scope.myColor = "green";   
@@ -205,7 +205,7 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
         iconOff : 'ion-ios-star-outline',
         iconOnColor: 'rgb(255, 201, 0)',
         iconOffColor:  'rgb(138, 138, 138)',
-        rating:  2,
+        rating:  3,
         minRating:1,
         callback: function(rating) {
           $scope.ratingsCallback(rating);
