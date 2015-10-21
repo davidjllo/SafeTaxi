@@ -63,6 +63,15 @@ var nameApp = angular.module('starter', ['ionic', 'starter.controllers', 'starte
             }
     }
 })
+.state('app.track', {
+    url: "/track",
+    views: {
+            'menuContent': {
+                templateUrl: "templates/track.html",
+                controller: "TrackCtrl"
+            }
+    }
+})
   .state('app.single', {
     url: '/playlists/:playlistId',
     views: {
