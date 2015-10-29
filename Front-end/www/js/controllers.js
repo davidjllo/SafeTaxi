@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ratings'])
+angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ratings','ngCordova'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, ngFB, ManageUser) {
 
@@ -98,7 +98,7 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
         });
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, TaxiService, TransferData, ManageUser, ngFB) {
+.controller('PlaylistsCtrl', function($scope, $http, TaxiService, TransferData, ManageUser, ngFB, ManageLicense) {
   $scope.estado = "";
   $scope.myColor = "white";
   console.log("BACKHERE");
@@ -128,7 +128,9 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
   $scope.clearAll = function(){
     location.reload();
   }
-
+  $scope.takeService = function(license){
+    ManageLicense.setLicense(license);
+  }
   $scope.getLicense = function(license){
     console.log(license);
     license = licenseToCode(license);
@@ -137,17 +139,17 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
     $scope.estado = "";
 
     TaxiService.getRating(license).then(function(response){
-      $scope.placas = response.data;
-      $scope.estado = "Puntaje: " + $scope.placas.toFixed(1);
+      $scope.puntaje = response.data;
+      $scope.estado = "Puntaje: " + $scope.puntaje.toFixed(1);
 
-      if($scope.placas >= 3){
+      if($scope.puntaje >= 3){
         $scope.myColor = "green";   
       }else 
-      if($scope.placas >= 2){
+      if($scope.puntaje >= 2){
         $scope.myColor = "orange";   
       }else
       $scope.myColor = "red";   
-      if($scope.placas == 0){
+      if($scope.puntaje == 0){
         $scope.estado="No ha sido calificado, calificalo y gana 20 puntos!";
         $scope.myColor="white";
       }
@@ -218,29 +220,49 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
 
 })
 
-.controller('TrackCtrl', function($scope, $ionicLoading){
-  google.maps.event.addDomListener(window, 'load', function() {
-        var myLatlng = new google.maps.LatLng(37.3000, -120.4833);
- 
-        var mapOptions = {
-            center: myLatlng,
-            zoom: 16,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
- 
-        var map = new google.maps.Map(document.getElementById("map"), mapOptions);
- 
-        navigator.geolocation.getCurrentPosition(function(pos) {
-            map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-            var myLocation = new google.maps.Marker({
-                position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
-                map: map,
-                title: "Mi ubicación"
-            });
-        });
- 
-        $scope.map = map;
+.controller('TrackCtrl', function($scope, $ionicLoading, ManageLicense){
+    var marker;
+    
+    $scope.dropPin = function(pos){
+      marker = new google.maps.Marker({
+                                                    position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
+                                                    map: $scope.map,
+                                                    title:"My Position"
+                                                    });
+    }
+    $scope.mapCreated = function(map) {
+      console.log("mapCreated");
+    $scope.map = map;
+    $scope.centerOnMe();
+
+    
+  };
+  $scope.sharePos = function(){
+    //Falta corregir!!!
+    // $cordovaSocialSharing
+    // .shareViaWhatsApp('Tomé un taxi de placas: '+ManageLicense.getLicense(), null /* img */, null /* url */, function() {console.log('share ok')}, function(){alert("error!")});
+    
+  }
+  $scope.centerOnMe = function () {
+    console.log("Centering");
+    if (!$scope.map) {
+      return;
+    }
+
+    $scope.loading = $ionicLoading.show({
+      content: 'Getting current location...',
+      showBackdrop: false
     });
+
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      console.log('Got pos', pos);
+      $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+      $scope.dropPin(pos);
+      $ionicLoading.hide();
+    }, function (error) {
+      alert('Unable to get location: ' + error.message);
+    });
+  };
 })
 .service('ManageUser', function(){
   var user;
@@ -259,12 +281,22 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
   var taxiRating;
   return{
       getTaxi: function(){
-        console.log("Aquí está haciendo el get");
         return taxiRating;
       },
       setTaxi: function(myTaxiRating){
-        console.log("Aquí está haciendo el set");
         taxiRating = myTaxiRating;
+      }
+  };
+})
+
+.service('ManageLicense', function(){
+  var license;
+  return{
+      getLicense: function(){
+        return license;
+      },
+      setLicense: function(myLicense){
+        license = myLicense;
       }
   };
 })
