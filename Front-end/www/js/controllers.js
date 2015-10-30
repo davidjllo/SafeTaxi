@@ -9,7 +9,7 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
   //$scope.$on('$ionicView.enter', function(e) {
   //});
 
- 
+
 
   // Form data for the login modal
   $scope.loginData = {};
@@ -58,57 +58,57 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
   };
   $scope.getUser = function(){
     ngFB.api({
-        path: '/me',
-        params: {fields: 'id,name'}
+      path: '/me',
+      params: {fields: 'id,name'}
     }).then(
-        function (user) {
-            $scope.user = user;
-            ManageUser.setUser(user);
-        },
-        function (error) {
-            alert('Facebook error: ' + error.error_description);
-        });
+    function (user) {
+      $scope.user = user;
+      ManageUser.setUser(user);
+    },
+    function (error) {
+      alert('Facebook error: ' + error.error_description);
+    });
   }
   $scope.fbLogout = function(){
-     ngFB.logout().then(
-                    function() {
-                        alert('Logout successful');
-                    },
-                    alert('Logout unsuccessful'));
+   ngFB.logout().then(
+    function() {
+      alert('Logout successful');
+    },
+    alert('Logout unsuccessful'));
 
-    $scope.toggleLoginButtons();
-  };
-  $scope.toggleLoginButtons = function(){
-    $scope.loginButton= !($scope.loginButton);
-    $scope.logoutButton= !($scope.logoutButton);
-    $scope.profile = !($scope.profile);
-  };
+   $scope.toggleLoginButtons();
+ };
+ $scope.toggleLoginButtons = function(){
+  $scope.loginButton= !($scope.loginButton);
+  $scope.logoutButton= !($scope.logoutButton);
+  $scope.profile = !($scope.profile);
+};
 })
 .controller('ProfileCtrl', function($scope, ngFB, ManageUser) {
-    ngFB.api({
-        path: '/me',
-        params: {fields: 'id,name'}
-    }).then(
-        function (user) {
-            $scope.user = user;
-            ManageUser.setUser(user);
-        },
-        function (error) {
-            alert('Facebook error: ' + error.error_description);
-        });
+  ngFB.api({
+    path: '/me',
+    params: {fields: 'id,name'}
+  }).then(
+  function (user) {
+    $scope.user = user;
+    ManageUser.setUser(user);
+  },
+  function (error) {
+    alert('Facebook error: ' + error.error_description);
+  });
 })
 
-.controller('PlaylistsCtrl', function($scope, $http, TaxiService, TransferData, ManageUser, ngFB, ManageLicense) {
+.controller('PlaylistsCtrl', function($scope, $http, $ionicPopup, TaxiService, TransferData, ManageUser, ngFB, ManageLicense) {
   $scope.estado = "";
   $scope.myColor = "white";
   console.log("BACKHERE");
   $scope.user = ManageUser.getUser();
   $scope.$watch(function () { return ManageUser.getUser(); }, function (newValue, oldValue) {
-        if (newValue != null) {
+    if (newValue != null) {
             //update Controller2's xxx value
             $scope.user= newValue;
-        }
-    }, true);
+          }
+        }, true);
   licenseToCode = function(license){
     var code="";
     for(var i = 0;i < 3;i++){
@@ -134,6 +134,7 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
   $scope.getLicense = function(license){
     console.log(license);
     license = licenseToCode(license);
+    $scope.license = license;
     console.log(license);
     $scope.myColor = "white";
     $scope.estado = "";
@@ -152,86 +153,118 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
       if($scope.puntaje == 0){
         $scope.estado="No ha sido calificado, calificalo y gana 20 puntos!";
         $scope.myColor="white";
+          // An elaborate, custom popup
+
+          var myPopup = $ionicPopup.show({
+            template: '<input type="text" ng-model="brand">',
+            title: 'Entra la marca del carro y gana 15 puntos!',
+            ,scope: $scope,
+            buttons: [
+            { text: 'Cancelar' },
+            {
+              text: '<b>Guardar</b>',
+              type: 'button-positive',
+              onTap: function(e) {
+                if (!$scope.brand) {
+            //don't allow the user to close unless he enters wifi password
+            //e.preventDefault();
+          } else {
+
+            var taxi = [{"marca": $scope.brand,"licenseId": ManageLicense.getLicense()}]<
+
+            TaxiService.setBrand(taxi);
+            return $scope.brand;
+          }
+        }
+      }
+      ]
+    });
+          myPopup.then(function(res) {
+            console.log('Tapped!', res);
+          });
+          $timeout(function() {
+     myPopup.close(); //close the popup after 3 seconds for some reason
+   }, 3000);
+        };
       }
     },function(err) {
       console.error('ERR', err);
     // err.status will contain the status code
   })
+return $scope.estado;
+}
 
-    return $scope.estado;
-  }
+$scope.sendDataCalificar = function(license){
+  $scope.taxiRating = "";
+  console.log(license);
+  license = licenseToCode(license);
+  console.log(license);
+  TransferData.setTaxi(license);
 
-  $scope.sendDataCalificar = function(license){
-      $scope.taxiRating = "";
-      console.log(license);
-      license = licenseToCode(license);
-      console.log(license);
-      TransferData.setTaxi(license);
-      
-      return $scope.taxiRating;
-  }
+  return $scope.taxiRating;
+}
 
 })
 
 .controller('CalificarCtrl', function($scope, $http, TaxiService, TransferData, ManageUser, ngFB) {
-    $scope.placaTaxi = TransferData.getTaxi();
-    getRating();
-    function getRating (){
-      console.log($scope.placaTaxi, "El onload está funcionando");
-      TaxiService.getTaxi($scope.placaTaxi).then(function(response){
-        console.log(response, "Este es el response del json")
-        $scope.taxi = response.data;
-      },function(err) {
+  $scope.placaTaxi = TransferData.getTaxi();
+  getRating();
+  function getRating (){
+    console.log($scope.placaTaxi, "El onload está funcionando");
+    TaxiService.getTaxi($scope.placaTaxi).then(function(response){
+      console.log(response, "Este es el response del json")
+      $scope.taxi = response.data;
+    },function(err) {
       console.error('ERR', err);
       // err.status will contain the status code
-      }) 
-    }
-    $scope.clearAll = function(){
+    }) 
+  }
+  $scope.clearAll = function(){
     location.reload();
   }
 
-    $scope.sendRating = function(comment){
-      TaxiService.sendRating($scope.placaTaxi, $scope.ratingsObject.rating, comment).then(function(response){
-        console.log(response, "this is my response");
-      },function(err) {
+  $scope.sendRating = function(comment){
+    TaxiService.sendRating($scope.placaTaxi, $scope.ratingsObject.rating, comment).then(function(response){
+      console.log(response, "this is my response");
+    },function(err) {
       console.error('ERR', err);
       // err.status will contain the status code
-      }) 
-      console.log("Rating has been sent, yaay!");
-      $scope.clearAll();
+    }) 
+    console.log("Rating has been sent, yaay!");
+    $scope.clearAll();
   }
 
 
-      $scope.ratingsObject = {
-        iconOn : 'ion-ios-star',
-        iconOff : 'ion-ios-star-outline',
-        iconOnColor: 'rgb(255, 201, 0)',
-        iconOffColor:  'rgb(138, 138, 138)',
-        rating:  3,
-        minRating:1,
-        callback: function(rating) {
-          $scope.ratingsCallback(rating);
-        }
-      };
+  $scope.ratingsObject = {
+    iconOn : 'ion-ios-star',
+    iconOff : 'ion-ios-star-outline',
+    iconOnColor: 'rgb(255, 201, 0)',
+    iconOffColor:  'rgb(138, 138, 138)',
+    rating:  3,
+    minRating:1,
+    callback: function(rating) {
+      $scope.ratingsCallback(rating);
+    }
+  };
 
-      $scope.ratingsCallback = function(rating) {
-        console.log('Selected rating is : ', rating);
-      };
+  $scope.ratingsCallback = function(rating) {
+    console.log('Selected rating is : ', rating);
+  };
 
 })
 
 .controller('TrackCtrl', function($scope, $ionicLoading, ManageLicense, $cordovaSocialSharing){
-    var marker;
-    
-    $scope.dropPin = function(pos){
-      marker = new google.maps.Marker({
-                                                    position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
-                                                    map: $scope.map,
-                                                    title:"My Position"
-                                                    });
-    }
-    $scope.mapCreated = function(map) {
-      console.log("mapCreated");
+  var marker;
+
+  $scope.dropPin = function(pos){
+    marker = new google.maps.Marker({
+      position: new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude),
+      map: $scope.map,
+      title:"My Position"
+    });
+  }
+  $scope.mapCreated = function(map) {
+    console.log("mapCreated");
     $scope.map = map;
     $scope.centerOnMe();
 
@@ -271,37 +304,37 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
 .service('ManageUser', function(){
   var user;
   return{
-      getUser: function(){
-        return user;
-      },
-      setUser: function(myUser){
-        console.log("changing user");
-        user = myUser;
-      }
+    getUser: function(){
+      return user;
+    },
+    setUser: function(myUser){
+      console.log("changing user");
+      user = myUser;
+    }
   };
 })
 
 .service('TransferData', function(){
   var taxiRating;
   return{
-      getTaxi: function(){
-        return taxiRating;
-      },
-      setTaxi: function(myTaxiRating){
-        taxiRating = myTaxiRating;
-      }
+    getTaxi: function(){
+      return taxiRating;
+    },
+    setTaxi: function(myTaxiRating){
+      taxiRating = myTaxiRating;
+    }
   };
 })
 
 .service('ManageLicense', function(){
   var license;
   return{
-      getLicense: function(){
-        return license;
-      },
-      setLicense: function(myLicense){
-        license = myLicense;
-      }
+    getLicense: function(){
+      return license;
+    },
+    setLicense: function(myLicense){
+      license = myLicense;
+    }
   };
 })
 
