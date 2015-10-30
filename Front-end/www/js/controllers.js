@@ -220,7 +220,7 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
 
 })
 
-.controller('TrackCtrl', function($scope, $ionicLoading, ManageLicense){
+.controller('TrackCtrl', function($scope, $ionicLoading, ManageLicense, $cordovaSocialSharing){
     var marker;
     
     $scope.dropPin = function(pos){
@@ -238,9 +238,12 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
     
   };
   $scope.sharePos = function(){
-    //Falta corregir!!!
-    // $cordovaSocialSharing
-    // .shareViaWhatsApp('Tomé un taxi de placas: '+ManageLicense.getLicense(), null /* img */, null /* url */, function() {console.log('share ok')}, function(){alert("error!")});
+    $cordovaSocialSharing.share('Tomé un taxi de placas: '+ManageLicense.getLicense()+" en la ubicación: "+$scope.pos.coords.latitude + ", "+$scope.pos.coords.longitude, null, null /* url */, function() {console.log('share ok')}, function(){alert("error!")});
+    
+  }
+  $scope.sos = function(){
+    $cordovaSocialSharing.shareViaWhatsApp('Ayuda! Tomé un taxi de placas: '+ManageLicense.getLicense()+" en la ubicación: "+$scope.pos.coords.latitude +
+     ", "+$scope.pos.coords.longitude + " y Necesito ayuda! Favor contactar a la policía y brindar esta informacion!", null, null /* url */, function() {console.log('share ok')}, function(){alert("error!")});
     
   }
   $scope.centerOnMe = function () {
@@ -255,6 +258,7 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
     });
 
     navigator.geolocation.getCurrentPosition(function (pos) {
+      $scope.pos = pos;
       console.log('Got pos', pos);
       $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
       $scope.dropPin(pos);
