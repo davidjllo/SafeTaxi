@@ -1,12 +1,12 @@
 <ion-view view-title="Profile">
     <ion-content class="has-header">
         <div class="list card">
-            <div class="item">
-                <h2>Usuario:</h2>
-                <h2>{{user.name}}</h2>
-                </div>
+            <div class="item" style="display: flex; text-align:center;">
+                <div style="flex: 1;"><img style="border: 3px solid #000000;" src="http://graph.facebook.com/{{user.id}}/picture?width=270&height=270" height="65" width="70"/></div>
+                <div style="flex: 1; border: 3px solid #0419DA; padding:5px"> <h2>{{user.name}}</h2> <h2>Puntaje: {{globalUser.data.score}}</h2> </div>
+            </div>
             <div class="item item-body">
-                <img src="http://graph.facebook.com/{{user.id}}/picture?width=270&height=270"/>
+
             </div>
         </div>
     </ion-content>

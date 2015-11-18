@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ratings','ngCordova'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout, ngFB, ManageUser) {
+.controller('AppCtrl', function($scope, $ionicModal, TaxiService, $timeout, ngFB, ManageUser) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -54,7 +54,7 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
           alert('Facebook login failed');
         }
       });
-    
+
   };
   $scope.getUser = function(){
     ngFB.api({
@@ -64,10 +64,24 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
     function (user) {
       $scope.user = user;
       ManageUser.setUser(user);
+      TaxiService.sendUser($scope.user.id).then(function(response){
+        console.log(response, "Este es el response del json")
+        TaxiService.getUser($scope.user.id).then(function(response){
+          $scope.globalUser = response;
+          console.log("global user", $scope.globalUser);
+        },function(err) {
+          console.error('ERR', err);
+          // err.status will contain the status code
+        })
+      },function(err) {
+        console.error('ERR', err);
+        // err.status will contain the status code
+      })
     },
     function (error) {
       alert('Facebook error: ' + error.error_description);
     });
+
   }
   $scope.fbLogout = function(){
    ngFB.logout().then(
@@ -101,6 +115,8 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
 .controller('PlaylistsCtrl', function($scope, $http, $ionicPopup, TaxiService, TransferData, ManageUser, ngFB, ManageLicense) {
   $scope.estado = "";
   $scope.myColor = "white";
+  $scope.globalRating = 3;
+  $scope.newTaxi = false;
   console.log("BACKHERE");
   $scope.user = ManageUser.getUser();
   $scope.$watch(function () { return ManageUser.getUser(); }, function (newValue, oldValue) {
@@ -142,23 +158,28 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
     TaxiService.getRating(license).then(function(response){
       $scope.puntaje = response.data;
       $scope.estado = "Puntaje: " + $scope.puntaje.toFixed(1);
-
+      $scope.newTaxi = false;
       if($scope.puntaje >= 3){
-        $scope.myColor = "green";   
-      }else 
-      if($scope.puntaje >= 2){
-        $scope.myColor = "orange";   
+        $scope.myColor = "green";
       }else
-      $scope.myColor = "red";   
+      if($scope.puntaje >= 2){
+        $scope.myColor = "orange";
+      }else{
+        $scope.myColor = "red";
+      }
       if($scope.puntaje == 0){
         $scope.estado="No ha sido calificado, calificalo y gana 20 puntos!";
         $scope.myColor="white";
+        $scope.newTaxi = true;
+        console.log("Points to 100", $scope.newTaxi);
+      }
+    })
           // An elaborate, custom popup
-
+/*
           var myPopup = $ionicPopup.show({
             template: '<input type="text" ng-model="brand">',
             title: 'Entra la marca del carro y gana 15 puntos!',
-            ,scope: $scope,
+            scope: $scope,
             buttons: [
             { text: 'Cancelar' },
             {
@@ -190,9 +211,9 @@ angular.module('starter.controllers', ['ngOpenFB', 'starter.services', 'ionic-ra
     },function(err) {
       console.error('ERR', err);
     // err.status will contain the status code
-  })
-return $scope.estado;
-}
+  }) */
+  return $scope.estado;
+ }
 
 $scope.sendDataCalificar = function(license){
   $scope.taxiRating = "";
@@ -217,21 +238,48 @@ $scope.sendDataCalificar = function(license){
     },function(err) {
       console.error('ERR', err);
       // err.status will contain the status code
-    }) 
+    })
   }
   $scope.clearAll = function(){
     location.reload();
   }
 
   $scope.sendRating = function(comment){
-    TaxiService.sendRating($scope.placaTaxi, $scope.ratingsObject.rating, comment).then(function(response){
+    console.log($scope.globalRating, " this is my rating ", comment);
+    var usr;
+    if ($scope.user){
+      usr = $scope.user.id;
+    }else{
+      usr = "default";
+    }
+    TaxiService.sendRating($scope.placaTaxi, $scope.globalRating, comment, usr).then(function(response){
       console.log(response, "this is my response");
     },function(err) {
       console.error('ERR', err);
       // err.status will contain the status code
-    }) 
+    })
+    console.log($scope.user, "this da USER");
+    if($scope.user){
+
+      $scope.updPoints = 10;
+      console.log($scope.newTaxi, " Bool Message at");
+      if ($scope.newTaxi){
+        console.log("Points to 100");
+        $scope.updPoints = 100;
+      }
+      $scope.scoreObj = {
+        "score": $scope.updPoints,
+        "username": $scope.user.id
+      }
+      TaxiService.updateScore($scope.scoreObj).then(function(response){
+        console.log(response, "this is my update res");
+      },function(err) {
+        console.error('ERR', err);
+        // err.status will contain the status code
+      })
+    }
     console.log("Rating has been sent, yaay!");
-    $scope.clearAll();
+     $scope.clearAll();
   }
 
 
@@ -248,6 +296,7 @@ $scope.sendDataCalificar = function(license){
   };
 
   $scope.ratingsCallback = function(rating) {
+    $scope.globalRating = rating;
     console.log('Selected rating is : ', rating);
   };
 
@@ -268,16 +317,16 @@ $scope.sendDataCalificar = function(license){
     $scope.map = map;
     $scope.centerOnMe();
 
-    
+
   };
   $scope.sharePos = function(){
     $cordovaSocialSharing.share('Tomé un taxi de placas: '+ManageLicense.getLicense()+" en la ubicación: "+$scope.pos.coords.latitude + ", "+$scope.pos.coords.longitude, null, null /* url */, function() {console.log('share ok')}, function(){alert("error!")});
-    
+
   }
   $scope.sos = function(){
     $cordovaSocialSharing.shareViaWhatsApp('Ayuda! Tomé un taxi de placas: '+ManageLicense.getLicense()+" en la ubicación: "+$scope.pos.coords.latitude +
      ", "+$scope.pos.coords.longitude + " y Necesito ayuda! Favor contactar a la policía y brindar esta informacion!", null, null /* url */, function() {console.log('share ok')}, function(){alert("error!")});
-    
+
   }
   $scope.centerOnMe = function () {
     console.log("Centering");

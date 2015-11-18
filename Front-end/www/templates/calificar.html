@@ -1,4 +1,4 @@
-<ion-view view-title="<img class='title-image' src='img/safetaxilogo.png'>">    
+<ion-view view-title="<img class='title-image' src='img/safetaxilogo.png'>">
 
 <ion-content onload="getRating()">
 <style type="text/css">
@@ -10,7 +10,7 @@
 <br>
 <br>
 <center>
-    <h2>Taxi modelo: {{taxi.modelo}}</h2>
+    <h2>Taxi modelo: {{taxi.marca}}</h2>
 </center>
 <br>
 <center>
@@ -25,7 +25,7 @@
 <center>
     <h2>Ingrese la calificación </h2>
         <ionic-ratings ratingsobj='ratingsObject' style="font-size: 50px" ></ionic-ratings>
-    
+
     <br>
     <label class="item item-input">
         <textarea placeholder="Ingrese sus comentarios" text-align="center" ng-model="comment" required></textarea>
