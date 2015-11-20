@@ -1,7 +1,7 @@
 angular.module('starter.services',['ngResource'])
 
 .factory('TaxiService', function ($http){
-	var UrlBase= "http://localhost:8080/safetaxi/webapi/";
+	var UrlBase= "www.safetaxi.elasticbeanstalk.com/webapi";
 	return {
 		getRating: function(license){
 			return $http.get(UrlBase+"taxis/placas/"+license).then(function(resp) {
